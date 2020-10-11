@@ -1,0 +1,1 @@
+EnhancedDiff-0.3.vmb: call delete('/home/akshat/.vim/plugin/EnhancedDiff.vim')|call delete('/home/akshat/.vim/autoload/EnhancedDiff.vim')|call delete('/home/akshat/.vim/doc/EnhancedDiff.txt')

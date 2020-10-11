@@ -1,0 +1,53 @@
+--- origplugin/taglist.vim	2005-07-28 21:36:00.000000000 +0200
++++ plugin/taglist.vim	2005-12-19 00:03:41.140940008 +0100
+@@ -78,7 +78,7 @@
+         let Tlist_Ctags_Cmd = 'tags'
+     else
+         echomsg 'Taglist: Exuberant ctags (http://ctags.sf.net) ' .
+-		    \ 'not found in PATH. Plugin is not loaded.'
++        \ 'not found in PATH. Plugin is not loaded.'
+         " Skip loading the plugin
+         let &cpo = s:cpo_save
+         finish
+@@ -250,6 +250,10 @@
+ " HTML language
+ let s:tlist_def_html_settings = 'html;a:anchor;f:javascript function'
+ 
++let s:tlist_def_eruby_settings = 'html;a:anchor;f:javascript function'
++
++let s:tlist_def_css_settings = 'css;f:fake'
++
+ " java language
+ let s:tlist_def_java_settings = 'java;p:package;c:class;i:interface;' .
+                               \ 'f:field;m:method'
+@@ -1418,9 +1422,19 @@
+     else
+         exe s:tlist_{fidx}_start - 1
+     endif
++    
++    let inner_dir = strpart(fnamemodify(s:tlist_{fidx}_filename, ':p:h'),strlen(g:base_dir) + 1)
++
++    if stridx(inner_dir,"models") != -1
++      let txt = "M:: " . fnamemodify(s:tlist_{fidx}_filename, ':t') . ' (' . inner_dir . ')'
++    elseif stridx(inner_dir,"controllers") != -1
++      let txt = ":C: " . fnamemodify(s:tlist_{fidx}_filename, ':t') . ' (' . inner_dir . ')'
++    elseif stridx(inner_dir,"views") != -1
++      let txt = "::V " . fnamemodify(s:tlist_{fidx}_filename, ':t') . ' (' . inner_dir . ')'
++    else
++      let txt = "::: " .fnamemodify(s:tlist_{fidx}_filename, ':t') . ' (' . inner_dir . ')'
++    endif
+ 
+-    let txt = fnamemodify(s:tlist_{fidx}_filename, ':t') . ' (' .
+-                \ fnamemodify(s:tlist_{fidx}_filename, ':p:h') . ')'
+     if g:Tlist_Compact_Format == 0
+         silent! put =txt
+     else
+@@ -2483,6 +2497,8 @@
+     let prev_Tlist_Skip_Refresh = s:Tlist_Skip_Refresh
+     let s:Tlist_Skip_Refresh = 1
+ 
++    exec "cd " . fnamemodify(a:filename, ':p:h')
++
+     if s:tlist_app_name == "winmanager"
+         " Let the winmanager edit the file
+         call WinManagerFileEdit(a:filename, a:win_ctrl)
